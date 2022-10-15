@@ -14,18 +14,33 @@ export const ContainerHeader = styled('header', {
   },
 
   button: {
-    width: '3rem',
-    height: '3rem',
+  
+    position: 'relative',
+    padding: '0.625rem',
+    
     backgroundColor: '$gray800',
-    borderRadius: '6px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    color: '$gray500',
-
+    color: '$white',
+    
     border: 0,
-    cursor: 'pointer'
+    borderRadius: 6,
+    
+    lineHeight: 0,
+
+    cursor: 'pointer',
+
+
+    span: {
+      position: 'absolute',
+      padding: '0.313rem',
+
+      borderRadius: '50%',
+      border: '2px solid $gray900',
+
+      backgroundColor: '$green300',
+
+      top: -6,
+      lineHeight: 0.5,
+    }
   }
 
 })

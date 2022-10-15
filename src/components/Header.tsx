@@ -1,14 +1,11 @@
-import Link from "next/link";
-import { ContainerHeader } from "../styles/components/Header";
 import Image from 'next/future/image';
-import logoImg from '../assets/logo.svg'
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { Handbag } from "phosphor-react";
+import logoImg from "../assets/logo.svg";
+import { ContainerHeader } from "../styles/components/Header";
 
 export function Header() {
-  const { pathname } = useRouter();
-
-  const handleCartButton = pathname !== '/success'
+ 
   return(
     <ContainerHeader>
         <Link href={"/"}>
@@ -16,7 +13,8 @@ export function Header() {
         </Link>
 
         <button>
-          {handleCartButton && <Handbag  size={24}/>}
+          <Handbag  size={24}/>
+          <span>1</span>
         </button>
         
       </ContainerHeader>
