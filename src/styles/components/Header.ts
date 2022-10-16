@@ -13,34 +13,35 @@ export const ContainerHeader = styled('header', {
     cursor: 'pointer'
   },
 
-  button: {
   
-    position: 'relative',
-    padding: '0.625rem',
-    
-    backgroundColor: '$gray800',
-    color: '$white',
-    
-    border: 0,
-    borderRadius: 6,
-    
-    lineHeight: 0,
 
-    cursor: 'pointer',
+})
+
+export const ButtonCheckoutNavbar =  styled('button', {
+  position: 'relative',
+  padding: '0.625rem',
+  
+  backgroundColor: '$gray800',
+  color: '$white',
+  
+  border: 0,
+  borderRadius: 6,
+  
+  lineHeight: 0,
+
+  cursor: 'pointer',
 
 
-    span: {
-      position: 'absolute',
-      padding: '0.313rem',
+  span: {
+    position: 'absolute',
+    padding: '0.313rem',
 
-      borderRadius: '50%',
-      border: '2px solid $gray900',
+    borderRadius: '50%',
+    border: '2px solid $gray900',
 
-      backgroundColor: '$green300',
+    backgroundColor: '$green300',
 
-      top: -6,
-      lineHeight: 0.5,
-    }
+    top: -6,
+    lineHeight: 0.5,
   }
-
 })
