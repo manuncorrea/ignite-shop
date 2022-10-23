@@ -2,46 +2,30 @@ import axios from "axios"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/future/image"
 import Head from "next/head"
+import { useRouter } from "next/router"
 import { useState } from "react"
 import Stripe from "stripe"
+import { ProductProps } from "../../context/CartContextProvider"
 import { userCart } from "../../hook/useCart"
 import { stripe } from "../../lib/stripe"
 import { ImageContainer, ProductContainer, ProductDetails } from "../../styles/pages/product"
 
-interface ProductProps {
-  product: {
-    id: string
-    name: string
-    imageUrl: string
-    price: string
-    description: string
-    defaultPriceId: string
-  }
+interface ProductPropsType {
+  product: ProductProps;
 }
 
-export default function Product({ product }: ProductProps) {
-  const {addCart } = userCart()
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false)
-  async function handleBuyButton() {
-    try {
-      setIsCreatingCheckoutSession(true)
+export default function Product({ product }: ProductPropsType) {
 
-      const response = await axios.post('/api/checkout', {
-        priceId: product.defaultPriceId
-      })
+  const { isFallback } = useRouter();
 
-      const { checkoutUrl } = response.data
+  const { addProductCart, buyProduct } = userCart()
+  const isCreatingCheckoutSession = buyProduct(product.id)
 
 
-      window.location.href = checkoutUrl
-
-    } catch (error) {
-      // Conectar com uma ferramenta de observalidade (Datadog / Sentry)
-      setIsCreatingCheckoutSession(false)
-
-      alert('Falha ao redirecionar ao checkout')
-    }
+  if(isFallback) {
+    return <p>Loadiang...</p>
   }
+
   return(
     <>
        <Head>
@@ -56,7 +40,7 @@ export default function Product({ product }: ProductProps) {
           <h1>{product.name}</h1>
           <span>{product.price}</span>
           <p>{product.description}</p>
-          <button disabled={isCreatingCheckoutSession} onClick={() => addCart(product)}>
+          <button disabled={isCreatingCheckoutSession} onClick={() => addProductCart(product)}>
            Adicionar ao carrinho
           </button>
         </ProductDetails>

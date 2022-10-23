@@ -3,7 +3,6 @@ import axios from "axios";
 import Image from "next/image";
 import { X } from "phosphor-react";
 import { useState } from "react";
-import camiseta1 from '../assets/camisetas/1.png';
 import { userCart } from "../hook/useCart";
 import {
   NavbarCartCartClose, NavbarCartContainer, NavbarCartContent, NavbarCartDetails,
@@ -13,13 +12,14 @@ import {
 
 export function NavbarCart() {
   const [isCheckoutSession, setIsCheckoutSession] = useState(false)
-  const { cart, romeverProductCart, total } = userCart();
+  const { cart, romeverProductCart, cartTotal } = userCart();
   const quantityItem = cart.length;
 
-  const formattedCartTotal = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(total);
+  const formattedCartTotal = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(cartTotal);
+
 
   async function handleCheckoutSession() {
     try {
@@ -37,7 +37,6 @@ export function NavbarCart() {
       alert('Falha ao redirecionar ao checkout')
     }
   }
-
 
   return (
     <Dialog.Portal>
