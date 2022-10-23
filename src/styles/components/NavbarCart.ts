@@ -53,7 +53,7 @@ export const NavbarCartContainer = styled('div', {
 
   gap: "1.25rem",
   height: "5.8125rem",
-})
+});
 
 export const NavbarContentImage =  styled('div', {
   width: '6.371rem',
@@ -62,7 +62,7 @@ export const NavbarContentImage =  styled('div', {
   background: 'linear-gradient(180deg, #1ea483 0%, #7465d4 100%)',
 
   borderRadius: 8
-})
+});
 
 export const NavbarCartDetails = styled('div', {
   display: 'flex',
@@ -98,7 +98,7 @@ export const NavbarCartDetails = styled('div', {
 
     cursor: 'pointer'
   }
-})
+});
 
 export const NavbarCartFooter = styled('footer', {
   display: 'flex',
@@ -130,7 +130,7 @@ export const NavbarCartFooter = styled('footer', {
     }
 
   }
-})
+});
 
 
 export const NavbarCartFooterSection = styled('section', {
@@ -163,6 +163,6 @@ export const NavbarCartFooterSection = styled('section', {
       },
     },
   }
-})
+});
 
 

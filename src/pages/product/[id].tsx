@@ -4,6 +4,7 @@ import Image from "next/future/image"
 import Head from "next/head"
 import { useState } from "react"
 import Stripe from "stripe"
+import { userCart } from "../../hook/useCart"
 import { stripe } from "../../lib/stripe"
 import { ImageContainer, ProductContainer, ProductDetails } from "../../styles/pages/product"
 
@@ -19,6 +20,7 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
+  const {addCart } = userCart()
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false)
   async function handleBuyButton() {
     try {
@@ -54,8 +56,8 @@ export default function Product({ product }: ProductProps) {
           <h1>{product.name}</h1>
           <span>{product.price}</span>
           <p>{product.description}</p>
-          <button disabled={isCreatingCheckoutSession} onClick={handleBuyButton}>
-            Comprar agora
+          <button disabled={isCreatingCheckoutSession} onClick={() => addCart(product)}>
+           Adicionar ao carrinho
           </button>
         </ProductDetails>
       </ProductContainer>
