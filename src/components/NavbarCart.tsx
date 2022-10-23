@@ -1,7 +1,10 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import axios from "axios";
 import Image from "next/image";
 import { X } from "phosphor-react";
+import { useState } from "react";
 import camiseta1 from '../assets/camisetas/1.png';
+import { userCart } from "../hook/useCart";
 import {
   NavbarCartCartClose, NavbarCartContainer, NavbarCartContent, NavbarCartDetails,
   NavbarCartFooter, NavbarCartFooterSection, NavbarContentImage
@@ -9,6 +12,33 @@ import {
 
 
 export function NavbarCart() {
+  const [isCheckoutSession, setIsCheckoutSession] = useState(false)
+  const { cart, romeverProductCart, total } = userCart();
+  const quantityItem = cart.length;
+
+  const formattedCartTotal = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(total);
+
+  async function handleCheckoutSession() {
+    try {
+      setIsCheckoutSession(true)
+
+      const response = await axios.post('/api/checkout', {
+        products: cart
+      });
+
+      const { checkoutUrl } = response.data
+
+      window.location.href = checkoutUrl;
+    } catch(err) {
+      setIsCheckoutSession(false)
+      alert('Falha ao redirecionar ao checkout')
+    }
+  }
+
+
   return (
     <Dialog.Portal>
       <NavbarCartContent>
@@ -18,51 +48,43 @@ export function NavbarCart() {
         <Dialog.Title>Sacola de compras</Dialog.Title>
     
         <section>
-          <NavbarCartContainer>
-            <NavbarContentImage>
-              <Image 
-                src={camiseta1}    
-                width={100}
-                height={93}
-                alt=""
-              />
-            </NavbarContentImage>
-            <NavbarCartDetails>
-              <p>Camiseta Beyond the Limits</p>
-              <strong>R$ 79,90</strong>
-              <button>Remover</button>
-            </NavbarCartDetails>
-          </NavbarCartContainer>
-
-          <NavbarCartContainer>
-            <NavbarContentImage>
-              <Image 
-                src={camiseta1}    
-                width={100}
-                height={93}
-                alt=""
-              />
-            </NavbarContentImage>
-            <NavbarCartDetails>
-              <p>Camiseta Beyond the Limits</p>
-              <strong>R$ 79,90</strong>
-              <button>Remover</button>
-            </NavbarCartDetails>
-          </NavbarCartContainer>
+          {cart.length <= 0 && (
+            <p>Seu carrinho está vazio!!</p>
+          )}
+          
+          {cart.map((cartItem) => (
+           <>
+            <NavbarCartContainer key={cartItem.id}>
+              <NavbarContentImage>
+                <Image 
+                  src={cartItem.imageUrl}    
+                  width={100}
+                  height={93}
+                  alt=""
+                />
+              </NavbarContentImage>
+              <NavbarCartDetails>
+                <p>{cartItem.name}</p>
+                <strong>{cartItem.price}</strong>
+                <button onClick={() => romeverProductCart(cartItem.id)}>Remover</button>
+              </NavbarCartDetails>
+            </NavbarCartContainer>
+           </>
+          ))}
         </section>
 
         <NavbarCartFooter>
           <NavbarCartFooterSection>
             <div>
               <span>Quantidade</span>
-              <p>3 itens</p>
+              <p>{quantityItem} {quantityItem > 1 ? "itens": "item"}</p>
             </div>
             <div>
               <span>Valor total</span>
-              <p>R$ 270,00</p>
+              <p>{formattedCartTotal}</p>
             </div>
           </NavbarCartFooterSection>
-          <button>Finalizar compra</button>
+          <button onClick={handleCheckoutSession} disabled={isCheckoutSession || quantityItem <= 0}>Finalizar compra</button>
         </NavbarCartFooter>
 
       </NavbarCartContent>
