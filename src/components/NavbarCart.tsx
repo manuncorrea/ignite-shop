@@ -8,7 +8,6 @@ import {
 } from "../styles/components/NavbarCart";
 
 
-
 export function NavbarCart() {
   return (
     <Dialog.Portal>
