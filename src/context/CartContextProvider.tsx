@@ -1,56 +1,82 @@
-import { createContext, ReactNode, useState } from "react"
+import { createContext, ReactNode, useEffect, useState } from "react"
+import { parseCookies, setCookie } from "nookies";
 
-export interface ProductProps {
+export interface Product {
   id: string
   name: string
-  price: string
+  price: number
   description: string
   imageUrl: string
   defaultPriceId: string
-  quantity: number
 }
 
 interface CartProps {
-  cart: ProductProps[];
-  cartTotal: number;
-  addProductCart: (product: ProductProps) => void;
+  productInCart: Product[];
+  productInCartTotal: boolean;
+  addProductCart: (product: Product) => void;
   romeverProductCart: (productId: string) => void;
-  buyProduct:  (productId: string) => boolean;
+  buyProduct:  () => void;
 }
-
+export const CartContext = createContext({} as CartProps)
 interface CartContextProviderProps {
   children: ReactNode
 }
 
-
-export const CartContext = createContext({} as CartProps)
-
 export function CartContextProvider({ children }: CartContextProviderProps) {
-  const [cart, setCart] = useState<ProductProps[]>([]);
+ const [productInCart, setProductInCart] = useState<Product[]>(() => {
+  const { cookies } = parseCookies(null, "PRODUCTS_IN_CART");
 
-  const cartTotal = cart.reduce((total, product) => {
-    return total + product.quantity;
-  }, 0);
+  if (cookies) {
+    return JSON.parse(cookies);
+  }
 
-  function addProductCart(product: ProductProps) {
-    setCart((state) => [...state, product])
+  return [];
+});
+
+const [productInCartTotal, setProductInCartTotal] = useState(false);
+
+useEffect(() => {
+  setCookie(null, "PRODUCTS_IN_CART", JSON.stringify(productInCart), {
+    maxAge: 30 * 24 * 60 * 60,
+    path: "/",
+  });
+
+  if (productInCart.length === 0) {
+    setProductInCartTotal(false);
+  }
+}, [productInCart]);
+
+  function addProductCart(product: Product) {
+    const containInCart = productInCart.findIndex((item) => {
+      return item.id === product.id;
+    });
+
+    if (containInCart < 0) {
+      setProductInCart((state) => [...state, product]);
+    } else {
+      setProductInCart((state) => [...state]);
+    }
   }
 
   function romeverProductCart(productId: string) {
-    setCart((state) => state.filter((item) => item.id !== productId))
+    const newProductsInCart = productInCart.filter((item) => {
+      return item.id !== productId;
+    });
+
+    setProductInCart(newProductsInCart);
   }
 
-  function buyProduct(productId: string) {
-    return cart.some((product) => product.id === productId)
+  function buyProduct() {
+   setProductInCartTotal(!productInCartTotal);
   }
 
 
   return (
     <CartContext.Provider value={{
-      cart, 
+      productInCart, 
       addProductCart, 
       romeverProductCart, 
-      cartTotal, 
+      productInCartTotal, 
       buyProduct
      }}>
       {children}

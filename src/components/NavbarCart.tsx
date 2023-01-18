@@ -2,31 +2,33 @@ import * as Dialog from "@radix-ui/react-dialog";
 import axios from "axios";
 import Image from "next/image";
 import { X } from "phosphor-react";
-import { useState } from "react";
-import { userCart } from "../hook/useCart";
+import { useContext, useState } from "react";
+import { CartContext } from "../context/CartContextProvider";
 import {
   NavbarCartCartClose, NavbarCartContainer, NavbarCartContent, NavbarCartDetails,
   NavbarCartFooter, NavbarCartFooterSection, NavbarContentImage
 } from "../styles/components/NavbarCart";
+import { formatteMoney } from "../utils/formatter";
 
 
 export function NavbarCart() {
-  const [isCheckoutSession, setIsCheckoutSession] = useState(false)
-  const { cart, romeverProductCart, cartTotal } = userCart();
-  const quantityItem = cart.length;
 
-  const formattedCartTotal = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(cartTotal);
+  const {productInCart, romeverProductCart, productInCartTotal, buyProduct} = useContext(CartContext);
 
+  const quantityItem = productInCart.length;
+
+  const [isCheckoutSession, setIsCheckoutSession] = useState(false);
+
+  const totalProductPrice = productInCart.reduce((total, item) => {
+    return total + item.price;
+  }, 0)
 
   async function handleCheckoutSession() {
     try {
       setIsCheckoutSession(true)
 
       const response = await axios.post('/api/checkout', {
-        products: cart
+        products: productInCart
       });
 
       const { checkoutUrl } = response.data
@@ -47,11 +49,11 @@ export function NavbarCart() {
         <Dialog.Title>Sacola de compras</Dialog.Title>
     
         <section>
-          {cart.length <= 0 && (
+          {productInCart.length <= 0 && (
             <p>Seu carrinho está vazio!!</p>
           )}
           
-          {cart.map((cartItem) => (
+          {productInCart.map((cartItem) => (
            <>
             <NavbarCartContainer key={cartItem.id}>
               <NavbarContentImage>
@@ -80,7 +82,7 @@ export function NavbarCart() {
             </div>
             <div>
               <span>Valor total</span>
-              <p>{formattedCartTotal}</p>
+              <p>{formatteMoney(totalProductPrice)}</p>
             </div>
           </NavbarCartFooterSection>
           <button onClick={handleCheckoutSession} disabled={isCheckoutSession || quantityItem <= 0}>Finalizar compra</button>
